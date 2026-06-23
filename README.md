@@ -1,157 +1,130 @@
-# Heart Disease Prediction
-
-- LinkedIn [Hema Kalyan Murapaka](https://www.linkedin.com/in/hemakalyan)
-- Medium [KalyanMurapaka274](https://medium.com/@kalyanmurapaka274)
-
-
-## About The Project
-
-
-Heart disease prediction is a crucial aspect of preventive healthcare that involves the comprehensive analysis of diverse data points to evaluate an individual's susceptibility to cardiovascular diseases. This process integrates demographic details like age and gender with critical clinical information, including medical and family histories, lifestyle choices, and existing health conditions such as hypertension or diabetes. By examining biomarkers like blood pressure, cholesterol levels, and blood sugar, alongside results from medical tests and imaging studies, predictive models can identify patterns and trends indicative of potential heart issues. Machine learning algorithms play a pivotal role in processing this information, helping stratify individuals into risk categories. The ultimate goal is to enable timely interventions and personalized preventive strategies, empowering individuals to make lifestyle adjustments that can mitigate the risk of heart-related events like heart attacks or strokes. Continuous monitoring and updating of predictive models ensure ongoing accuracy and effectiveness in supporting proactive heart health management.
-
-## About the Dataset
-
-This dataset gives information related to heart disease. The dataset contains 13 columns, target is the class variable which is affected by the other 12 columns. Here the aim is to classify the target variable to (disease\non disease) using different machine learning algorithms and find out which algorithm is suitable for this dataset.
-<br><be>
-
-<h3>Attributes:</h3> 
-
- - Age 
- - Gender 
- - Chest Pain Type
- - Resting Blood Pressure
- - Serum Cholesterol 
- - Fasting Blood Sugar 
- - Resting Electrocardiographic Results
- - Maximum Heart Rate Achieved
- - Exercise-induced angina
- - Depression induced by exercise relative to rest
- - Slope of the Peak Exercise ST Segment
- - Number of Major Vessels Colored by Fluoroscopy
- - Thalassemia
- - Target 
-
-## Built With
-
- - Pandas
- - Numpy
- - Scikit-Learn
- - Seaborn
- - Matplotlib
- - Flask
- - DVC (Data Version Control)
- - MLFlow
- - Catboost
- - XG Boost
-
-## Getting Started
-
-This will help you understand how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
-
-## Installation Steps
-
-### Option 1: Installation from GitHub
-
-Follow these steps to install and set up the project directly from the GitHub repository:
-
-1. **Clone the Repository**
-   - Open your terminal or command prompt.
-   - Navigate to the directory where you want to install the project.
-   - Run the following command to clone the GitHub repository:
-     ```
-     git clone https://github.com/KalyanMurapaka45/Heart-Disease-Prediction.git
-     ```
-
-2. **Create a Virtual Environment** (Optional but recommended)
-   - It's a good practice to create a virtual environment to manage project dependencies. Run the following command:
-     ```
-     conda create -p <Environment_Name> python==<python version> -y
-     ```
-
-3. **Activate the Virtual Environment** (Optional)
-   - Activate the virtual environment based on your operating system:
-       ```
-       conda activate <Environment_Name>/
-       ```
-
-4. **Install Dependencies**
-   - Navigate to the project directory:
-     ```
-     cd [project_directory]
-     ```
-   - Run the following command to install project dependencies:
-     ```
-     pip install -r requirements.txt
-     ```
-
-5. **Run the Project**
-   - Start the project by running the appropriate command.
-     ```
-     python app.py
-     ```
-
-6. **Access the Project**
-   - Open a web browser or the appropriate client to access the project.
+<div align="center">
+  <img src="cardio_ai_banner.png" alt="CardioAI Banner" width="100%">
   
-<br><br>
-### Option 2: Installation from DockerHub
+  <h1>🩺 CardioAI: Quad-Core Diagnostic Engine</h1>
+  <p><b>Enterprise-Grade Machine Learning for Cardiovascular Disease Prediction</b></p>
+  
+  [![Python](https://img.shields.io/badge/Python-3.8%2B-blue?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+  [![Flask](https://img.shields.io/badge/Flask-Web%20App-lightgrey?style=for-the-badge&logo=flask)](https://flask.palletsprojects.com/)
+  [![XGBoost](https://img.shields.io/badge/XGBoost-Gradient%20Boosting-red?style=for-the-badge&logo=xgboost)](https://xgboost.readthedocs.io/)
+  [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker)](https://www.docker.com/)
+  [![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)](#)
+</div>
 
-If you prefer to use Docker, you can install and run the project using a Docker container from DockerHub:
+---
 
-1. **Pull the Docker Image**
-   - Open your terminal or command prompt.
-   - Run the following command to pull the Docker image from DockerHub:
-     ```
-     docker pull kalyan45/heart-app
-     ```
+## 🌟 Overview
 
-2. **Run the Docker Container**
-   - Start the Docker container by running the following command, and mapping any necessary ports:
-     ```
-     docker run -p 5000:5000 kalyan45/heart-app
-     ```
+CardioAI is a state-of-the-art Medical AI application integrating four distinct Machine Learning pipelines into a single, cohesive web interface. Engineered for both public health triage and advanced clinical diagnostics, it employs sophisticated data engineering (e.g., SMOTE) and aggressive threshold tuning to prioritize patient safety (Recall) over raw accuracy.
 
-3. **Access the Project**
-   - Open a web browser or the appropriate client to access the project.
+---
 
-## Setup
+## 🚀 Key Features
 
-### MLflow Tracking
+*   **Quad-Core Architecture:** Seamlessly switches between 4 distinct diagnostic models depending on the data available.
+*   **Deep Hyperparameter Grid Search:** Evaluated hundreds of combinations of Random Forest and XGBoost parameters to find the absolute mathematical peak of performance.
+*   **Aggressive Safety Thresholding:** Overrode the default 50% Machine Learning confidence threshold, dropping it to 30% for advanced diagnostics to drastically increase sensitivity to heart attacks.
+*   **Imbalanced Data Mastery (SMOTE):** Mathematically generated synthetic data for highly imbalanced datasets, ensuring the algorithm learns clinical patterns instead of majority-class guessing.
 
-We use MLflow to log and track our machine learning experiments. The MLFLOW_TRACKING_URI environment variable is set to the DagsHub repository's MLflow tracking URI.
+---
 
-```bash
-export MLFLOW_TRACKING_URI=https://dagshub.com/HemaKalyan45/Heart-Disease-Prediction.mlflow
+## 🧠 Diagnostic Modes
 
-export MLFLOW_TRACKING_USERNAME=HemaKalyan45
+| Mode | Purpose | Accuracy | Recall | Key Features |
+| :--- | :--- | :--- | :--- | :--- |
+| **Mode 1: CDC** | Rapid public health triage | `90.21%` | - | High BP, Cholesterol, BMI, Smoker, Stroke, Diabetes |
+| **Mode 2: Clinical** | Standard physical metrics | `73.77%` | - | BP, Height, Weight, Glucose/Cholesterol categories |
+| **Mode 3: NHANES** | Advanced chemical bloodwork | `82.90%` | **`50.48%`** | Fasting Glucose, CRP, Total Cholesterol, WBC, HDL |
+| **Mode 4: BRFSS** | Deep lifestyle & behavioral | `91.31%` | - | 40+ extensive behavioral/environmental metrics |
 
-export MLFLOW_TRACKING_PASSWORD=f3c9457eb0ff83244e93ac8ee651b80d4b35f07c
+---
+
+## 🏗️ Enterprise System Architecture
+
+```mermaid
+graph TD
+    UI[Flask Frontend UI] --> API[Prediction Pipeline]
+    
+    API -->|Routing| Router{Diagnostic Mode}
+    
+    Router -->|Mode 1| CDC[CDC Pipeline]
+    Router -->|Mode 2| CLIN[Clinical Pipeline]
+    Router -->|Mode 3| NHANES[NHANES Pipeline]
+    Router -->|Mode 4| BRFSS[BRFSS Pipeline]
+    
+    CDC -.->|Loads| CDC_M[(CDC Model)]
+    CLIN -.->|Loads| CLIN_M[(Clinical Model)]
+    NHANES -.->|Loads| NHANES_M[(NHANES Model)]
+    BRFSS -.->|Loads| BRFSS_M[(BRFSS Model)]
+    
+    NHANES_M -->|Applies| Threshold[30% Safety Thresholding]
+    Threshold --> Result[Diagnosis Result]
 ```
 
-## Contributing
+---
 
-Contributions are what makes the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+## 📂 Clean Project Structure
 
-If you have a suggestion that would make this better, please fork the repo and create a pull request. You can also simply open an issue with the tag "enhancement".
-Don't forget to give the project a star! Thanks again!
+```text
+📦 Cardiosense-ML
+ ┣ 📂 config/           # Configuration files
+ ┣ 📂 models/           # Compiled ML artifacts (.pkl files)
+ ┣ 📂 scripts/          # Dataset processors & experiment scripts
+ ┣ 📂 src/              # Core Machine Learning logic
+ ┃ ┣ 📂 Heart/          # Heart disease package
+ ┃ ┃ ┣ 📂 components/   # Ingestion, transformation, evaluation, training
+ ┃ ┃ ┗ 📂 pipeline/     # Prediction & training pipelines
+ ┣ 📂 static/           # CSS & Frontend Assets
+ ┣ 📂 templates/        # HTML UI (Jinja2)
+ ┣ 📂 tests/            # Validation & Metric scripts
+ ┣ 📜 app.py            # Main Flask Application
+ ┣ 📜 Makefile          # Enterprise deployment commands
+ ┣ 📜 Dockerfile        # Containerization instructions
+ ┣ 📜 requirements.txt  # Strict dependencies
+ ┗ 📜 README.md         # You are here
+```
 
-1. Fork the Project
-2. Create your Feature Branch
-3. Commit your Changes
-4. Push to the Branch
-5. Open a Pull Request
+---
 
-## License
+## 🛠️ Installation & Usage
 
-Distributed under the MIT License. See `LICENSE.txt` for more information.
+This project utilizes an enterprise `Makefile` for instant setup.
 
+### Prerequisites
+- Python 3.8+
+- Git
 
-## Contact
+### Quick Start
 
-Hema Kalyan Murapaka - [@kalyanmurapaka274@gmail.com](kalyanmurapaka274@gmail.com)
+1. **Clone the repository:**
+   ```bash
+   git clone https://github.com/AyushGU12/Cardiosense-ML.git
+   cd Cardiosense-ML
+   ```
 
+2. **Install dependencies:**
+   ```bash
+   make install
+   ```
 
-## Acknowledgements
+3. **Run the Application:**
+   ```bash
+   make run
+   ```
+   *The application will launch on `http://127.0.0.1:5000`.*
 
-We'd like to extend our gratitude to all individuals and organizations who have played a role in the development and success of this project. Your support, whether through contributions, inspiration, or encouragement, has been invaluable. Thank you for being a part of our journey.
+### Testing & Training
+To run the automated metric evaluation script:
+```bash
+make test
+```
+To retrain the Machine Learning models from scratch:
+```bash
+make train
+```
+
+---
+
+<div align="center">
+  <i>Developed for Advanced Diagnostic Prototyping</i>
+</div>

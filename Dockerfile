@@ -10,5 +10,8 @@ COPY . ./
 # RUN - executes any commands in a new layer on top of the current image and commits the results.
 RUN pip install -r requirements.txt
 
+# EXPOSE - informs Docker that the container listens on the specified network ports at runtime.
+EXPOSE 5000
+
 # CMD - provides defaults for an executing container.
-CMD python app.py
+CMD ["python", "app.py"]

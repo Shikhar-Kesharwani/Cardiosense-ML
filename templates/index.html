@@ -1,88 +1,640 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Heart Disease Prediction</title>
+    <title>Heart Disease Prediction - Dual AI Analysis</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <style>
+        .toggle-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 20px;
+            gap: 15px;
+        }
+        .toggle-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-family: 'Outfit', sans-serif;
+            transition: all 0.3s ease;
+        }
+        .toggle-btn.active {
+            background: rgba(255, 100, 100, 0.5);
+            border-color: rgba(255, 100, 100, 0.8);
+            box-shadow: 0 0 10px rgba(255, 100, 100, 0.5);
+        }
+    </style>
 </head>
 <body>
-    <div class="container"><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
-        <h1><center>Heart Disease Prediction</center></h1>
-        <form method="post">
-            <label for="age">Age:</label>
-            <input type="text" name="age" required>
+    <!-- 3D Background Container -->
+    <div id="canvas-container"></div>
 
-            <label for="sex">Sex:</label>
-            <select name="sex" required>
-                <option value="0">Female</option>
-                <option value="1">Male</option>
-            </select>
+    <!-- Main Content -->
+    <main class="dashboard">
+        <header class="dashboard-header">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <h1>CardioAI <span>Predictor</span></h1>
+            </div>
+            <p class="subtitle">Dual-Model Machine Learning Diagnostics</p>
+        </header>
 
-            <label for="cp">Chest Pain Type:</label>
-            <select name="cp" required>
-                <option value="0">Typical Angina</option>
-                <option value="1">Atypical Angina</option>
-                <option value="2">Non-Anginal Pain</option>
-                <option value="3">Asymptomatic</option>
-            </select>
+        <section class="glass-panel form-section">
+            
+            <div class="toggle-container" style="flex-wrap: wrap;">
+                <button id="btn-cdc" class="toggle-btn active" onclick="toggleForm('cdc')">Mode 1: Quick Public Health</button>
+                <button id="btn-clinical" class="toggle-btn" onclick="toggleForm('clinical')">Mode 2: Basic Physical</button>
+                <button id="btn-nhanes" class="toggle-btn" onclick="toggleForm('nhanes')">Mode 3: Advanced Lab Diagnosis</button>
+                <button id="btn-brfss" class="toggle-btn" onclick="toggleForm('brfss')">Mode 4: Deep Lifestyle Analysis</button>
+            </div>
 
-            <label for="trestbps">Resting Blood Pressure (mm Hg):</label>
-            <input type="text" name="trestbps" required>
 
-            <label for="chol">Serum Cholesterol (mg/dl):</label>
-            <input type="text" name="chol" required>
+            <!-- CLINICAL FORM -->
+            <form action="/predict_clinical" method="post" class="grid-form" id="clinical-form" style="display: none;">
+                <div class="form-group">
+                    <label for="age"><i class="fa-solid fa-calendar"></i> Age (in days)</label>
+                    <input type="number" name="age" id="age" required placeholder="e.g. 18393">
+                </div>
+                <div class="form-group">
+                    <label for="gender"><i class="fa-solid fa-venus-mars"></i> Gender (1=Women, 2=Men)</label>
+                    <select name="gender" id="gender" required>
+                        <option value="1">Women</option>
+                        <option value="2">Men</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="height"><i class="fa-solid fa-ruler-vertical"></i> Height (cm)</label>
+                    <input type="number" name="height" id="height" required placeholder="e.g. 168">
+                </div>
+                <div class="form-group">
+                    <label for="weight"><i class="fa-solid fa-weight-scale"></i> Weight (kg)</label>
+                    <input type="number" step="0.1" name="weight" id="weight" required placeholder="e.g. 62.0">
+                </div>
+                <div class="form-group">
+                    <label for="ap_hi"><i class="fa-solid fa-heart-pulse"></i> Systolic BP (ap_hi)</label>
+                    <input type="number" name="ap_hi" id="ap_hi" required placeholder="e.g. 110">
+                </div>
+                <div class="form-group">
+                    <label for="ap_lo"><i class="fa-solid fa-heart-pulse"></i> Diastolic BP (ap_lo)</label>
+                    <input type="number" name="ap_lo" id="ap_lo" required placeholder="e.g. 80">
+                </div>
+                <div class="form-group">
+                    <label for="cholesterol"><i class="fa-solid fa-burger"></i> Cholesterol</label>
+                    <select name="cholesterol" id="cholesterol" required>
+                        <option value="1">1 - Normal</option>
+                        <option value="2">2 - Above Normal</option>
+                        <option value="3">3 - Well Above Normal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="gluc"><i class="fa-solid fa-cubes-stacked"></i> Glucose</label>
+                    <select name="gluc" id="gluc" required>
+                        <option value="1">1 - Normal</option>
+                        <option value="2">2 - Above Normal</option>
+                        <option value="3">3 - Well Above Normal</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="smoke"><i class="fa-solid fa-smoking"></i> Smoking</label>
+                    <select name="smoke" id="smoke" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="alco"><i class="fa-solid fa-wine-glass"></i> Alcohol intake</label>
+                    <select name="alco" id="alco" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="active"><i class="fa-solid fa-person-running"></i> Physical activity</label>
+                    <select name="active" id="active" required>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+                <div class="form-actions full-width">
+                    <button type="submit" class="glow-button">
+                        <i class="fa-solid fa-microchip"></i> Analyze Clinical Data
+                    </button>
+                </div>
+            </form>
 
-            <label for="fbs">Fasting Blood Sugar > 120 mg/dl:</label>
-            <select name="fbs" required>
-                <option value="0">No</option>
-                <option value="1">Yes</option>
-            </select>
+            <!-- CDC FORM -->
+            <form action="/predict_cdc" method="post" class="grid-form" id="cdc-form">
+                <div class="form-group">
+                    <label for="HighBP"><i class="fa-solid fa-stethoscope"></i> High Blood Pressure</label>
+                    <select name="HighBP" id="HighBP" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
 
-            <label for="restecg">Resting Electrocardiographic Results:</label>
-            <select name="restecg" required>
-                <option value="0">Normal</option>
-                <option value="1">ST-T Wave Abnormality</option>
-                <option value="2">Left Ventricular Hypertrophy</option>
-            </select>
+                <div class="form-group">
+                    <label for="HighChol"><i class="fa-solid fa-burger"></i> High Cholesterol</label>
+                    <select name="HighChol" id="HighChol" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
 
-            <label for="thalach">Maximum Heart Rate Achieved:</label>
-            <input type="text" name="thalach" required>
+                <div class="form-group">
+                    <label for="CholCheck"><i class="fa-solid fa-notes-medical"></i> Cholesterol Check (Last 5 Yrs)</label>
+                    <select name="CholCheck" id="CholCheck" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
 
-            <label for="exang">Exercise Induced Angina:</label>
-            <select name="exang" required>
-                <option value="0">No</option>
-                <option value="1">Yes</option>
-            </select>
+                <div class="form-group">
+                    <label for="BMI"><i class="fa-solid fa-weight-scale"></i> Body Mass Index (BMI)</label>
+                    <input type="number" name="BMI" id="BMI" required placeholder="e.g. 25">
+                </div>
 
-            <label for="oldpeak">Oldpeak:</label>
-            <input type="text" name="oldpeak" required>
+                <div class="form-group">
+                    <label for="Smoker"><i class="fa-solid fa-smoking"></i> Smoked > 100 Cigarettes in Life</label>
+                    <select name="Smoker" id="Smoker" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
 
-            <label for="slope">Slope of the Peak Exercise ST Segment:</label>
-            <select name="slope" required>
-                <option value="0">Upsloping</option>
-                <option value="1">Flat</option>
-                <option value="2">Downsloping</option>
-            </select>
+                <div class="form-group">
+                    <label for="Stroke"><i class="fa-solid fa-brain"></i> History of Stroke</label>
+                    <select name="Stroke" id="Stroke" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
 
-            <label for="ca">Number of Major Vessels Colored by Fluoroscopy:</label>
-            <select name="ca" required>
-                <option value="0">0</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
-            </select>
+                <div class="form-group">
+                    <label for="Diabetes"><i class="fa-solid fa-syringe"></i> Diabetes Status</label>
+                    <select name="Diabetes" id="Diabetes" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No Diabetes</option>
+                        <option value="1">Pre-diabetes</option>
+                        <option value="2">Diabetes</option>
+                    </select>
+                </div>
 
-            <label for="thal">Thalassemia:</label>
-            <select name="thal" required>
-                <option value="0">Normal</option>
-                <option value="1">Fixed Defect</option>
-                <option value="2">Reversible Defect</option>
-            </select>
+                <div class="form-group">
+                    <label for="PhysActivity"><i class="fa-solid fa-person-running"></i> Physical Activity (Past 30 days)</label>
+                    <select name="PhysActivity" id="PhysActivity" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
 
-            <button type="submit">Predict</button>
-        </form>
-    </div>
+                <div class="form-group">
+                    <label for="Fruits"><i class="fa-solid fa-apple-whole"></i> Consume Fruit 1+ Times/Day</label>
+                    <select name="Fruits" id="Fruits" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Veggies"><i class="fa-solid fa-carrot"></i> Consume Veggies 1+ Times/Day</label>
+                    <select name="Veggies" id="Veggies" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="HvyAlcoholConsump"><i class="fa-solid fa-wine-glass"></i> Heavy Alcohol Consumer</label>
+                    <select name="HvyAlcoholConsump" id="HvyAlcoholConsump" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="AnyHealthcare"><i class="fa-solid fa-house-medical"></i> Health Care Coverage</label>
+                    <select name="AnyHealthcare" id="AnyHealthcare" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="NoDocbcCost"><i class="fa-solid fa-money-bill-wave"></i> Skipped Doctor due to Cost</label>
+                    <select name="NoDocbcCost" id="NoDocbcCost" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="GenHlth"><i class="fa-solid fa-heart-circle-check"></i> General Health Rating</label>
+                    <select name="GenHlth" id="GenHlth" required>
+                        <option value="" disabled selected>Select Rating</option>
+                        <option value="1">1 - Excellent</option>
+                        <option value="2">2 - Very Good</option>
+                        <option value="3">3 - Good</option>
+                        <option value="4">4 - Fair</option>
+                        <option value="5">5 - Poor</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="MentHlth"><i class="fa-solid fa-face-frown"></i> Poor Mental Health Days (0-30)</label>
+                    <input type="number" name="MentHlth" id="MentHlth" required min="0" max="30" placeholder="e.g. 2">
+                </div>
+
+                <div class="form-group">
+                    <label for="PhysHlth"><i class="fa-solid fa-crutch"></i> Poor Physical Health Days (0-30)</label>
+                    <input type="number" name="PhysHlth" id="PhysHlth" required min="0" max="30" placeholder="e.g. 5">
+                </div>
+
+                <div class="form-group">
+                    <label for="DiffWalk"><i class="fa-solid fa-wheelchair"></i> Difficulty Walking</label>
+                    <select name="DiffWalk" id="DiffWalk" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">No</option>
+                        <option value="1">Yes</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Sex"><i class="fa-solid fa-venus-mars"></i> Sex</label>
+                    <select name="Sex" id="Sex" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="0">Female</option>
+                        <option value="1">Male</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Age"><i class="fa-solid fa-calendar"></i> Age Category (1-13)</label>
+                    <select name="Age" id="Age" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="1">18-24</option>
+                        <option value="2">25-29</option>
+                        <option value="3">30-34</option>
+                        <option value="4">35-39</option>
+                        <option value="5">40-44</option>
+                        <option value="6">45-49</option>
+                        <option value="7">50-54</option>
+                        <option value="8">55-59</option>
+                        <option value="9">60-64</option>
+                        <option value="10">65-69</option>
+                        <option value="11">70-74</option>
+                        <option value="12">75-79</option>
+                        <option value="13">80+</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="Education"><i class="fa-solid fa-graduation-cap"></i> Education Level (1-6)</label>
+                    <select name="Education" id="Education" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="1">Never Attended</option>
+                        <option value="2">Grades 1-8</option>
+                        <option value="3">Grades 9-11</option>
+                        <option value="4">High School Grad</option>
+                        <option value="5">Some College</option>
+                        <option value="6">College Grad</option>
+                    </select>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="Income"><i class="fa-solid fa-sack-dollar"></i> Income Bracket (1-8)</label>
+                    <select name="Income" id="Income" required>
+                        <option value="" disabled selected>Select</option>
+                        <option value="1">&lt; $10k</option>
+                        <option value="2">$10k - $15k</option>
+                        <option value="3">$15k - $20k</option>
+                        <option value="4">$20k - $25k</option>
+                        <option value="5">$25k - $35k</option>
+                        <option value="6">$35k - $50k</option>
+                        <option value="7">$50k - $75k</option>
+                        <option value="8">&gt; $75k</option>
+                    </select>
+                </div>
+
+                <div class="form-actions full-width">
+                    <button type="submit" class="glow-button">
+                        <i class="fa-solid fa-microchip"></i> Analyze Public Health Data
+                    </button>
+                </div>
+            </form>
+        
+            <!-- NHANES FORM -->
+            <form action="/predict_nhanes" method="post" class="grid-form" id="nhanes-form" style="display: none;">
+                <div class="form-group">
+    <label for="RIDAGEYR">Age (Years)</label>
+    <input type="number" name="RIDAGEYR" id="RIDAGEYR" required min="0" max="120" placeholder="e.g. 50">
+</div>
+<div class="form-group">
+    <label for="RIAGENDR">Gender</label>
+    <select name="RIAGENDR" id="RIAGENDR" required>
+        <option value="1">Male</option>
+        <option value="2">Female</option>
+    </select>
+</div>
+<div class="form-group">
+    <label for="BMXBMI">Body Mass Index (BMI)</label>
+    <input type="number" step="0.1" name="BMXBMI" id="BMXBMI" required placeholder="e.g. 25.5">
+</div>
+<div class="form-group">
+    <label for="BPXSY1">Systolic Blood Pressure (mmHg)</label>
+    <input type="number" name="BPXSY1" id="BPXSY1" required placeholder="e.g. 120">
+</div>
+<div class="form-group">
+    <label for="BPXDI1">Diastolic Blood Pressure (mmHg)</label>
+    <input type="number" name="BPXDI1" id="BPXDI1" required placeholder="e.g. 80">
+</div>
+<div class="form-group">
+    <label for="LBXTR">Triglycerides (mg/dL)</label>
+    <input type="number" name="LBXTR" id="LBXTR" required placeholder="e.g. 150">
+</div>
+<div class="form-group">
+    <label for="LBDHDD">HDL Cholesterol (mg/dL)</label>
+    <input type="number" step="0.1" name="LBDHDD" id="LBDHDD" required placeholder="e.g. 45.0">
+</div>
+<div class="form-group">
+    <label for="LBXGLU">Fasting Glucose (mg/dL)</label>
+    <input type="number" step="0.1" name="LBXGLU" id="LBXGLU" required placeholder="e.g. 95.0">
+</div>
+<div class="form-group">
+    <label for="LBXCRP">C-Reactive Protein (mg/L)</label>
+    <input type="number" step="0.1" name="LBXCRP" id="LBXCRP" required placeholder="e.g. 1.5">
+</div>
+<div class="form-group">
+    <label for="LBXTC">Total Cholesterol (mg/dL)</label>
+    <input type="number" step="0.1" name="LBXTC" id="LBXTC" required placeholder="e.g. 180.0">
+</div>
+<div class="form-group">
+    <label for="LBXWBCSI">White Blood Cell Count (1000 cells/uL)</label>
+    <input type="number" step="0.1" name="LBXWBCSI" id="LBXWBCSI" required placeholder="e.g. 6.5">
+</div>
+
+                <div class="form-actions full-width">
+                    <button type="submit" class="glow-button">
+                        <i class="fa-solid fa-microchip"></i> Analyze NHANES Data
+                    </button>
+                </div>
+            </form>
+
+            <!-- BRFSS FORM -->
+            <form action="/predict_brfss" method="post" class="grid-form" id="brfss-form" style="display: none;">
+                
+<div class="form-group">
+    <label for="BPHIGH4">BPHIGH4</label>
+    <input type="number" name="BPHIGH4" id="BPHIGH4" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="TOLDHI2">TOLDHI2</label>
+    <input type="number" name="TOLDHI2" id="TOLDHI2" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="CHOLCHK">CHOLCHK</label>
+    <input type="number" name="CHOLCHK" id="CHOLCHK" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="SMOKE100">SMOKE100</label>
+    <input type="number" name="SMOKE100" id="SMOKE100" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="CVDSTRK3">CVDSTRK3</label>
+    <input type="number" name="CVDSTRK3" id="CVDSTRK3" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="DIABETE3">DIABETE3</label>
+    <input type="number" name="DIABETE3" id="DIABETE3" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="_TOTINDA">_TOTINDA</label>
+    <input type="number" name="_TOTINDA" id="_TOTINDA" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="_FRTLT1">_FRTLT1</label>
+    <input type="number" name="_FRTLT1" id="_FRTLT1" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="_VEGLT1">_VEGLT1</label>
+    <input type="number" name="_VEGLT1" id="_VEGLT1" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="HLTHPLN1">HLTHPLN1</label>
+    <input type="number" name="HLTHPLN1" id="HLTHPLN1" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="MEDCOST">MEDCOST</label>
+    <input type="number" name="MEDCOST" id="MEDCOST" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="GENHLTH">GENHLTH</label>
+    <input type="number" name="GENHLTH" id="GENHLTH" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="MENTHLTH">MENTHLTH</label>
+    <input type="number" name="MENTHLTH" id="MENTHLTH" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="PHYSHLTH">PHYSHLTH</label>
+    <input type="number" name="PHYSHLTH" id="PHYSHLTH" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="DIFFWALK">DIFFWALK</label>
+    <input type="number" name="DIFFWALK" id="DIFFWALK" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="SEX">SEX</label>
+    <input type="number" name="SEX" id="SEX" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="_AGEG5YR">_AGEG5YR</label>
+    <input type="number" name="_AGEG5YR" id="_AGEG5YR" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="EDUCA">EDUCA</label>
+    <input type="number" name="EDUCA" id="EDUCA" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="INCOME2">INCOME2</label>
+    <input type="number" name="INCOME2" id="INCOME2" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="ASTHMA3">ASTHMA3</label>
+    <input type="number" name="ASTHMA3" id="ASTHMA3" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="CHCSCNCR">CHCSCNCR</label>
+    <input type="number" name="CHCSCNCR" id="CHCSCNCR" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="CHCOCNCR">CHCOCNCR</label>
+    <input type="number" name="CHCOCNCR" id="CHCOCNCR" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="CHCCOPD1">CHCCOPD1</label>
+    <input type="number" name="CHCCOPD1" id="CHCCOPD1" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="HAVARTH3">HAVARTH3</label>
+    <input type="number" name="HAVARTH3" id="HAVARTH3" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="ADDEPEV2">ADDEPEV2</label>
+    <input type="number" name="ADDEPEV2" id="ADDEPEV2" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="CHCKIDNY">CHCKIDNY</label>
+    <input type="number" name="CHCKIDNY" id="CHCKIDNY" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="WEIGHT2">WEIGHT2</label>
+    <input type="number" name="WEIGHT2" id="WEIGHT2" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="HEIGHT3">HEIGHT3</label>
+    <input type="number" name="HEIGHT3" id="HEIGHT3" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="ALCDAY5">ALCDAY5</label>
+    <input type="number" name="ALCDAY5" id="ALCDAY5" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="EXERANY2">EXERANY2</label>
+    <input type="number" name="EXERANY2" id="EXERANY2" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="SEATBELT">SEATBELT</label>
+    <input type="number" name="SEATBELT" id="SEATBELT" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="FLUSHOT6">FLUSHOT6</label>
+    <input type="number" name="FLUSHOT6" id="FLUSHOT6" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="PNEUVAC3">PNEUVAC3</label>
+    <input type="number" name="PNEUVAC3" id="PNEUVAC3" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="HIVTST6">HIVTST6</label>
+    <input type="number" name="HIVTST6" id="HIVTST6" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="QSTVER">QSTVER</label>
+    <input type="number" name="QSTVER" id="QSTVER" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="QSTLANG">QSTLANG</label>
+    <input type="number" name="QSTLANG" id="QSTLANG" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="_STATE">_STATE</label>
+    <input type="number" name="_STATE" id="_STATE" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="MSCODE">MSCODE</label>
+    <input type="number" name="MSCODE" id="MSCODE" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="MARITAL">MARITAL</label>
+    <input type="number" name="MARITAL" id="MARITAL" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="VETERAN3">VETERAN3</label>
+    <input type="number" name="VETERAN3" id="VETERAN3" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="DECIDE">DECIDE</label>
+    <input type="number" name="DECIDE" id="DECIDE" required placeholder="0">
+</div>
+
+<div class="form-group">
+    <label for="DIFFALON">DIFFALON</label>
+    <input type="number" name="DIFFALON" id="DIFFALON" required placeholder="0">
+</div>
+
+                <div class="form-actions full-width">
+                    <button type="submit" class="glow-button">
+                        <i class="fa-solid fa-microchip"></i> Analyze Deep Lifestyle
+                    </button>
+                </div>
+            </form>
+</section>
+    </main>
+
+    <!-- Three.js for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="{{ url_for('static', filename='3d_heart.js') }}"></script>
+    <script>
+        function toggleForm(type) {
+            const forms = ['clinical', 'cdc', 'nhanes', 'brfss'];
+            forms.forEach(f => {
+                document.getElementById(f + '-form').style.display = 'none';
+                document.getElementById('btn-' + f).classList.remove('active');
+            });
+            
+            document.getElementById(type + '-form').style.display = 'grid';
+            document.getElementById('btn-' + type).classList.add('active');
+        }
+    </script>
 </body>
 </html>

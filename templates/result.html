@@ -1,9 +1,56 @@
-{% if final_result is defined %}
-<div class="result">
-    {% if final_result == 0 %}
-        <center><h1><p>No heart disease detected</p></h1></center>
-    {% else %}
-        <center><h1><p>Suffering from heart disease</p></h1></center>
-    {% endif %}
-</div>
-{% endif %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Analysis Result - CardioAI</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- 3D Background Container -->
+    <div id="canvas-container"></div>
+
+    <main class="dashboard">
+        <header class="dashboard-header">
+            <div class="logo">
+                <i class="fa-solid fa-heart-pulse"></i>
+                <h1>CardioAI <span>Predictor</span></h1>
+            </div>
+            <p class="subtitle">{{ mode }} Complete</p>
+        </header>
+
+        <section class="result-container">
+            {% if final_result is defined %}
+                {% if final_result == 0 %}
+                <div class="glass-panel result-card healthy">
+                    <div class="result-icon">
+                        <i class="fa-solid fa-shield-heart"></i>
+                    </div>
+                    <h1>No Heart Disease Detected</h1>
+                    <p>The patient's metrics are within a healthy range.</p>
+                    <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Analyze Another Patient</a>
+                </div>
+                {% else %}
+                <div class="glass-panel result-card danger">
+                    <div class="result-icon">
+                        <i class="fa-solid fa-heart-crack"></i>
+                    </div>
+                    <h1>Elevated Risk Detected</h1>
+                    <p>The model indicates potential signs of heart disease. Consult a cardiologist for a thorough medical review.</p>
+                    <a href="/" class="back-link"><i class="fa-solid fa-arrow-left"></i> Analyze Another Patient</a>
+                </div>
+                {% endif %}
+            {% endif %}
+        </section>
+    </main>
+
+    <!-- Three.js for 3D Background -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <script src="{{ url_for('static', filename='3d_heart.js') }}"></script>
+</body>
+</html>

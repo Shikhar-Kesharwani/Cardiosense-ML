@@ -17,36 +17,89 @@ from sklearn.ensemble import RandomForestClassifier
 from src.Heart.utils.utils import save_object, evaluate_model
 
 
-@dataclass 
 class ModelTrainerConfig:
-    trained_model_file_path = os.path.join('Artifacts','Model.pkl')
+    def __init__(self, dataset_type):
+        self.trained_model_file_path = os.path.join('models',f'Model_{dataset_type}.pkl')
+        self.dataset_type = dataset_type
     
     
 class ModelTrainer:
-    def __init__(self):
-        self.model_trainer_config = ModelTrainerConfig()
+    def __init__(self, dataset_type):
+        self.model_trainer_config = ModelTrainerConfig(dataset_type)
     
     def initate_model_training(self,train_array,test_array):
         try:
-            logging.info('Splitting Dependent and Independent variables from train and test data')
+            logging.info(f'Splitting Dependent and Independent variables from train and test data for {self.model_trainer_config.dataset_type}')
             X_train, y_train, X_test, y_test = (
                 train_array[:,:-1],
                 train_array[:,-1],
                 test_array[:,:-1],
                 test_array[:,-1])
             
-            models = {
-                'Logistic Regression':LogisticRegression(),
-                'Naive Bayes':GaussianNB(),
-                'Random Forest Classfier':RandomForestClassifier(n_estimators=20, random_state=12,max_depth=5),
-                'XG Boost':XGBClassifier(learning_rate=0.01, n_estimators=25, max_depth=15,gamma=0.6, subsample=0.52,colsample_bytree=0.6,
-                                         seed=27, reg_lambda=2, booster='dart', colsample_bylevel=0.6, colsample_bynode=0.5),
-                'K Nearest Neighbors':KNeighborsClassifier(n_neighbors=10),
-                'Decision Tree':DecisionTreeClassifier(criterion = 'entropy',random_state=0,max_depth = 6),
-                'Support Vector Machine':SVC(kernel='rbf', C=2)
+            from sklearn.ensemble import StackingClassifier
+            estimators = [
+                ('rf', RandomForestClassifier(random_state=12)),
+                ('xgb', XGBClassifier(seed=27, booster='gbtree')),
+                ('dt', DecisionTreeClassifier(random_state=0))
+            ]
+            stacking_clf = StackingClassifier(estimators=estimators, final_estimator=LogisticRegression(max_iter=1000), n_jobs=-1)
+
+            if self.model_trainer_config.dataset_type in ['brfss', 'uci', 'nhanes']:
+                models = {
+                    'Random Forest Classfier':RandomForestClassifier(random_state=12),
+                    'XG Boost':XGBClassifier(seed=27, booster='gbtree', use_label_encoder=False, eval_metric='logloss')
+                }
+                params={
+                    "Random Forest Classfier":{
+                        'n_estimators': [50, 100, 200],
+                        'max_depth': [5, 10, 15, 20],
+                        'min_samples_split': [2, 5, 10],
+                        'min_samples_leaf': [1, 2, 4]
+                    },
+                    "XG Boost":{
+                        'learning_rate': [0.01, 0.05, 0.1, 0.2],
+                        'n_estimators': [50, 100, 200],
+                        'max_depth': [3, 5, 7, 10],
+                        'subsample': [0.8, 1.0],
+                        'colsample_bytree': [0.8, 1.0]
+                    }
+                }
+            else:
+                models = {
+                    'Logistic Regression':LogisticRegression(max_iter=1000),
+                    'Naive Bayes':GaussianNB(),
+                    'Random Forest Classfier':RandomForestClassifier(random_state=12),
+                    'XG Boost':XGBClassifier(seed=27, booster='gbtree'),
+                    'K Nearest Neighbors':KNeighborsClassifier(),
+                    'Decision Tree':DecisionTreeClassifier(random_state=0),
+                    'Support Vector Machine':SVC(),
+                    'Stacking Classifier': stacking_clf
+                    }
+                
+                params={
+                    "Logistic Regression":{},
+                    "Decision Tree": {
+                        'criterion':['gini', 'entropy', 'log_loss'],
+                        'max_depth':[3,5,7,10]
+                    },
+                    "Random Forest Classfier":{
+                        'n_estimators': [50, 100],
+                        'max_depth': [5, 10, 15]
+                    },
+                    "XG Boost":{
+                        'learning_rate':[0.01, 0.05, 0.1],
+                        'n_estimators': [50, 100],
+                        'max_depth': [5, 10]
+                    },
+                    "K Nearest Neighbors": {
+                        'n_neighbors': [5, 10, 15]
+                    },
+                    "Support Vector Machine": {},
+                    "Naive Bayes": {},
+                    "Stacking Classifier": {}
                 }
             
-            model_report = evaluate_model(X_train, y_train, X_test, y_test, models)
+            model_report = evaluate_model(X_train, y_train, X_test, y_test, models, param=params)
             print(model_report)
             print('\n====================================================================================\n')
             logging.info(f'Model Report: {model_report}')
@@ -60,9 +113,9 @@ class ModelTrainer:
 
             best_model = models[best_model_name]
 
-            print(f'Best Model Found, Model Name: {best_model_name}, Accuracy Score: {best_model_score}')
+            print(f'Best Model Found for {self.model_trainer_config.dataset_type}, Model Name: {best_model_name}, Accuracy Score: {best_model_score}')
             print('\n====================================================================================\n')
-            logging.info(f'Best Model Found, Model Name: {best_model_name}, Accuracy Score: {best_model_score}')
+            logging.info(f'Best Model Found for {self.model_trainer_config.dataset_type}, Model Name: {best_model_name}, Accuracy Score: {best_model_score}')
 
             save_object(
                  file_path=self.model_trainer_config.trained_model_file_path,
@@ -71,4 +124,4 @@ class ModelTrainer:
           
         except Exception as e:
             logging.info('Exception occured at Model Training')
-            raise customexception(e,sys)    
+            raise customexception(e,sys)

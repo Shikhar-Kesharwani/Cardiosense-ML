@@ -16,10 +16,21 @@ def save_object(file_path, obj):
     except Exception as e:
         raise customexception(e, sys)
     
-def evaluate_model(X_train, y_train, X_test, y_test, models):
+from sklearn.model_selection import RandomizedSearchCV
+
+def evaluate_model(X_train, y_train, X_test, y_test, models, param):
     try:
         report = {}
-        for model_name, model in models.items():
+        for i in range(len(list(models))):
+            model_name = list(models.keys())[i]
+            model = list(models.values())[i]
+            para = param.get(model_name, {})
+
+            if para:
+                rs = RandomizedSearchCV(model, para, cv=3, n_iter=5, n_jobs=-1, random_state=42)
+                rs.fit(X_train, y_train)
+                model.set_params(**rs.best_params_)
+
             model.fit(X_train, y_train)
             y_test_pred = model.predict(X_test)
             test_model_score = accuracy_score(y_test, y_test_pred)
