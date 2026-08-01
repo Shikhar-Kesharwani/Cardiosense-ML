@@ -4,11 +4,11 @@ scikit-learn
 seaborn
 ipykernel
 matplotlib
-flask 
+flask
+gunicorn
 dvc
 catboost
 xgboost
 mlflow
 imbalanced-learn
-
 -e .
