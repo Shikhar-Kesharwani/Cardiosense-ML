@@ -1,0 +1,10 @@
+# Exclude heavy dataset experiments and backups from Vercel serverless bundle
+Notebook_Experiments/
+Backup_State/
+mlruns/
+logs/
+venv/
+
+# Exclude raw training CSVs (keep only .pkl model weights)
+*.csv
+models/*.csv
