@@ -1,14 +1,8 @@
+flask
+gunicorn
 pandas
 numpy
 scikit-learn
-seaborn
-ipykernel
-matplotlib
-flask
-gunicorn
-dvc
-catboost
 xgboost
-mlflow
+catboost
 imbalanced-learn
--e .
