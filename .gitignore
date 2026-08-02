@@ -163,13 +163,13 @@ heartenv/
 #  option (not recommended) you can uncomment the following to ignore the entire idea folder.
 #.idea/
 # Security & Privacy Lockdown
-models/
+# models/ (Unignored so Render can access .pkl files)
 Backup_State/
 Notebook_Experiments/
 logs/
 mlruns/
 *.csv
-*.pkl
+# *.pkl (Unignored so Render can access model weights)
 .env
 .dvc/
 
