@@ -63,6 +63,24 @@ graph TD
 
 ---
 
+## 🌍 Dual Architecture Deployment (DADMP)
+
+This project features a Dual Architecture Deployment pipeline designed for both maximum scale and self-hosted privacy. For detailed deployment instructions, refer to the [Enterprise Deployment Playbook](infra/cloud/DEPLOYMENT_GUIDE.md).
+
+### Architecture 1: Cloud Native (Live Demo)
+A zero-maintenance, fully managed environment running on **Render.com**.
+*   **Infrastructure:** Serverless/PaaS managed deployment.
+*   **Continuous Integration:** Auto-deploy triggered on GitHub commits.
+*   **Best For:** Portfolio demonstrations, hackathons, and public health campaigns.
+
+### Architecture 2: Self-Hosted Container (Docker)
+A fully isolated, on-premise capable environment built with **Docker Compose** and **Nginx**.
+*   **Infrastructure:** Virtual Private Server (VPS), EC2, or local bare metal.
+*   **Networking:** Includes an Nginx reverse proxy and Gunicorn WSGI server.
+*   **Best For:** Strict HIPAA/GDPR data compliance and private clinical deployment.
+
+---
+
 ## 📂 Clean Project Structure
 
 ```text
@@ -94,11 +112,11 @@ This project utilizes an enterprise `Makefile` for instant setup.
 - Python 3.8+
 - Git
 
-### Quick Start
+### Local Execution
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/AyushGU12/Cardiosense-ML.git
+   git clone https://github.com/Shikhar-Kesharwani/Cardiosense-ML.git
    cd Cardiosense-ML
    ```
 
@@ -112,6 +130,14 @@ This project utilizes an enterprise `Makefile` for instant setup.
    make run
    ```
    *The application will launch on `http://127.0.0.1:5000`.*
+
+### Docker Deployment (Architecture 2)
+
+To deploy the production-ready Docker Compose environment:
+```bash
+make docker-up
+```
+*To stop the containers, use `make docker-down`.*
 
 ### Testing & Training
 To run the automated metric evaluation script:
