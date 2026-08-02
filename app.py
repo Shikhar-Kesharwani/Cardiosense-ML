@@ -1,3 +1,4 @@
+import os
 from flask import Flask, request, render_template
 from src.Heart.pipeline.Prediction_pipeline import CustomDataCDC, CustomDataClinical, CustomDataNHANES, CustomDataBRFSS, PredictPipeline
 
@@ -116,4 +117,8 @@ def predict_brfss():
 
 # Execution begins
 if __name__ == '__main__':
-    app.run(host="0.0.0.0", port=5000, debug=True)
+    # PORT env var: defaults to 7860 (Hugging Face Spaces requirement).
+    # Override locally with: PORT=5000 python app.py
+    port = int(os.environ.get("PORT", 7860))
+    debug = os.environ.get("FLASK_DEBUG", "false").lower() == "true"
+    app.run(host="0.0.0.0", port=port, debug=debug)

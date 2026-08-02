@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: cardiosense-ml
+    env: docker
+    dockerfilePath: ./Dockerfile
+    healthCheckPath: /
+    envVars:
+      - key: PORT
+        value: 10000
+      - key: FLASK_DEBUG
+        value: false

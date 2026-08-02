@@ -172,3 +172,26 @@ mlruns/
 *.pkl
 .env
 .dvc/
+
+# ── DADMP v1.0 — Section 6 Additions ─────────────────────────────────────────
+# Environment files (all variants blocked; only .env.example is committed)
+.env.*
+!.env.example
+
+# ML model weight formats — never commit large binary model files to git
+*.h5
+*.pt
+*.pth
+*.onnx
+*.joblib
+
+# Dataset directories
+data/
+datasets/
+Artifacts/
+
+# Docker secrets — real values only in infra/docker/.env (gitignored)
+infra/docker/.env
+
+# Vercel artifacts (no longer used — HF Spaces is Model 1)
+.vercel/

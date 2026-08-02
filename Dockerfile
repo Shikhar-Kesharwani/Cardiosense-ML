@@ -1,17 +1,30 @@
-# FROM  - the base image to use to start the build process.
-FROM python:3.8-slim-buster
+# ─────────────────────────────────────────────────────────────────────────────
+# Dockerfile — CardioSense ML (Hugging Face Spaces compatible)
+# ─────────────────────────────────────────────────────────────────────────────
 
-# WORKDIR - sets the working directory for any RUN, CMD, ENTRYPOINT, COPY and ADD instructions that follow it in the Dockerfile.
-WORKDIR /app
+FROM python:3.10-slim
 
-#COPY - copies files or directories and adds them to the filesystem of the container.
-COPY . ./
+# Hugging Face Spaces requires the app to run as a non-root user (UID 1000)
+RUN useradd -m -u 1000 user
+USER user
 
-# RUN - executes any commands in a new layer on top of the current image and commits the results.
-RUN pip install -r requirements.txt
+ENV HOME=/home/user \
+    PATH=/home/user/.local/bin:$PATH \
+    # Default port for Hugging Face Spaces. Override with PORT env var locally.
+    PORT=7860
 
-# EXPOSE - informs Docker that the container listens on the specified network ports at runtime.
-EXPOSE 5000
+WORKDIR $HOME/app
 
-# CMD - provides defaults for an executing container.
-CMD ["python", "app.py"]
+# Install dependencies first (cached layer — only rebuilds when requirements change)
+COPY --chown=user requirements.txt .
+RUN pip install --no-cache-dir --upgrade pip && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy application source code
+COPY --chown=user . .
+
+# Hugging Face Spaces REQUIRES port 7860
+EXPOSE 7860
+
+# Start the Flask application via gunicorn for production stability
+CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "1", "--timeout", "120", "app:app"]
