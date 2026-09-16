@@ -2,7 +2,10 @@ import os
 from flask import Flask, request, render_template
 from src.Heart.pipeline.Prediction_pipeline import CustomDataCDC, CustomDataClinical, CustomDataNHANES, CustomDataBRFSS, PredictPipeline
 
+from flask_cors import CORS
 app = Flask(__name__)
+CORS(app, resources={r'/*': {'origins': '*'}})
+
 
 # Define the home route
 @app.route("/")
@@ -116,6 +119,11 @@ def predict_brfss():
         return render_template("error.html", error_message=error_message)
 
 # Execution begins
+
+@app.route('/health')
+def health_check():
+    return {'status': 'ok', 'service': 'cardio-ai-backend'}
+
 if __name__ == '__main__':
     # PORT env var: defaults to 7860 (Hugging Face Spaces requirement).
     # Override locally with: PORT=5000 python app.py

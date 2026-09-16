@@ -28,3 +28,5 @@ EXPOSE 7860
 
 # Start the Flask application via gunicorn for production stability
 CMD ["gunicorn", "--bind", "0.0.0.0:7860", "--workers", "1", "--timeout", "120", "app:app"]
+HEALTHCHECK --interval=30s --timeout=10s --retries=3 \
+  CMD curl -f http://localhost:5000/health || exit 1

@@ -195,3 +195,6 @@ infra/docker/.env
 
 # Vercel artifacts (no longer used — HF Spaces is Model 1)
 .vercel/
+
+# Massive Datasets
+Notebook_Experiments/Data/
