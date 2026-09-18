@@ -28,8 +28,8 @@ class ModelEvaluation:
             model=load_object(model_path)
 
             try:
-                mlflow.set_registry_uri("https://dagshub.com/HemaKalyan45/Heart-Disease-Prediction.mlflow")
-                            
+                mlflow_uri = os.getenv("MLFLOW_TRACKING_URI", "https://dagshub.com/placeholder/Heart-Disease-Prediction.mlflow")
+                mlflow.set_registry_uri(mlflow_uri)
                 tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
                 
                 print(tracking_url_type_store)
